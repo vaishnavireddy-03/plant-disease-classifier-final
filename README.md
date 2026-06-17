@@ -139,7 +139,16 @@ streamlit run app.py
 ```
 
 ---
+## Results
 
+| Metric | Score |
+|----------|----------|
+| Test Accuracy | 94.83% |
+| Precision | 95.06% |
+| Recall | 94.83% |
+| F1 Score | 94.84% |
+
+The CNN achieved high classification performance on the PlantVillage dataset across 15 disease categories. The model demonstrates strong generalization and can effectively identify plant diseases from leaf images.
 ## Future Improvements
 
 - Increase model depth
