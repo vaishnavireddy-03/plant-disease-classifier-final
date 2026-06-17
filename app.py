@@ -123,6 +123,10 @@ if uploaded_file is not None:
     with torch.no_grad():
 
         outputs = model(img)
+        probabilities = torch.softmax(outputs, dim=1)
+
+st.write("Raw outputs:", outputs)
+st.write("Probabilities:", probabilities)
 
         probabilities = torch.softmax(outputs, dim=1)
 
