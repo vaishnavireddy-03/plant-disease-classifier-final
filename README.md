@@ -154,6 +154,4 @@ streamlit run app.py
 
 Vaishnavi Reddy
 
-BITS Pilani Hyderabad Campus
-
-M.Sc. Physics + ENI
+BITS Pilani Hyderabad Campus  
