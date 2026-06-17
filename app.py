@@ -5,7 +5,7 @@ from torchvision import transforms
 from PIL import Image
 
 # -----------------------------
-# Disease Classes
+# Classes
 # -----------------------------
 
 classes = [
@@ -27,12 +27,12 @@ classes = [
 ]
 
 # -----------------------------
-# CNN Model
+# Model
 # -----------------------------
 
 class PlantCNN(nn.Module):
 
-    def __init__(self, num_classes):
+    def __init__(self, num_classes=15):
         super().__init__()
 
         self.conv1 = nn.Conv2d(3, 16, 3)
@@ -67,12 +67,12 @@ def load_model():
 
     model = PlantCNN(num_classes=15)
 
-    model.load_state_dict(
-        torch.load(
-            "plantcnn.pth",
-            map_location="cpu"
-        )
+    state_dict = torch.load(
+        "plantcnn.pth",
+        map_location=torch.device("cpu")
     )
+
+    model.load_state_dict(state_dict)
 
     model.eval()
 
@@ -88,23 +88,23 @@ transform = transforms.Compose([
     transforms.Resize((128, 128)),
     transforms.ToTensor(),
     transforms.Normalize(
-        [0.485, 0.456, 0.406],
-        [0.229, 0.224, 0.225]
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
     )
 ])
 
 # -----------------------------
-# Streamlit UI
+# UI
 # -----------------------------
 
 st.title("🌿 Plant Disease Classifier")
 
 st.write(
-    "Upload a plant leaf image to identify the disease."
+    "Upload a leaf image and the CNN model will predict the disease."
 )
 
 uploaded_file = st.file_uploader(
-    "Choose an image",
+    "Upload Leaf Image",
     type=["jpg", "jpeg", "png"]
 )
 
@@ -118,15 +118,11 @@ if uploaded_file is not None:
         use_container_width=True
     )
 
-    img = transform(image).unsqueeze(0)
+    img_tensor = transform(image).unsqueeze(0)
 
     with torch.no_grad():
 
-        outputs = model(img)
-        probabilities = torch.softmax(outputs, dim=1)
-
-st.write("Raw outputs:", outputs)
-st.write("Probabilities:", probabilities)
+        outputs = model(img_tensor)
 
         probabilities = torch.softmax(outputs, dim=1)
 
@@ -142,3 +138,8 @@ st.write("Probabilities:", probabilities)
     st.info(
         f"Confidence: {confidence.item()*100:.2f}%"
     )
+
+    # Debug section
+    with st.expander("Model Details"):
+        st.write("Predicted Index:", predicted.item())
+        st.write("Top Confidence:", confidence.item())
